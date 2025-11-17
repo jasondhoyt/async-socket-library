@@ -3,5 +3,14 @@
 
 #pragma once
 
-#include "socket.hpp"
-#include "version.hpp"
+namespace jhoyt::asl
+{
+
+    enum class socket_domain
+    {
+        ipv4,
+        ipv6,
+        file
+    };
+
+}

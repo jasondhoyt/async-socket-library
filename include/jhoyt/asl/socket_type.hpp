@@ -3,5 +3,12 @@
 
 #pragma once
 
-#include "socket.hpp"
-#include "version.hpp"
+namespace jhoyt::asl
+{
+
+    enum class socket_type
+    {
+        stream
+    };
+
+}

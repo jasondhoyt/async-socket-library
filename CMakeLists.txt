@@ -66,6 +66,7 @@ endif ()
 
 set(ASL_SOURCES
         src/raw_address.cpp
+        src/socket.cpp
 )
 
 if (ASL_BUILD_SHARED OR BUILD_SHARED_LIBS)
