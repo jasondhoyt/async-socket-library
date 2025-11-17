@@ -14,11 +14,11 @@
 
 #include "jhoyt/asl/socket.hpp"
 
+#include "detail/error.hpp"
+
 namespace
 {
     using namespace jhoyt::asl;
-
-    constexpr auto k_strerror_cap = 256;
 
 #if !defined(_WIN32)
     constexpr auto k_socket_error = -1;
@@ -79,15 +79,6 @@ namespace
         return 0;
     }
 
-    std::string make_socket_error_string(std::string_view msg)
-    {
-#if !defined(_WIN32)
-        auto buf = std::array<char, k_strerror_cap>{};
-        strerror_r(errno, buf.data(), buf.size());
-        return std::format("{}: {}", msg, buf.data());
-#endif
-    }
-
     bool would_block()
     {
 #if !defined(_WIN32)
@@ -121,30 +112,29 @@ namespace jhoyt::asl
         return *this;
     }
 
-    void socket::open(socket_domain domain, socket_type type)
+    void socket::open(const socket_domain domain, const socket_type type)
     {
         close();
 
         const auto tmp_sock = ::socket(map_socket_domain(domain), map_socket_type(type), 0);
         if (tmp_sock == k_invalid_socket)
         {
-            throw std::runtime_error{make_socket_error_string("failed to open socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to open socket")};
         }
 
-        // TODO : make socket non-blocking
 #if !defined(_WIN32)
         auto flags = fcntl(tmp_sock, F_GETFL);
         if (flags == -1)
         {
             ::close(tmp_sock);
-            throw std::runtime_error{make_socket_error_string("failed to get socket flags")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to get socket flags")};
         }
 
         flags |= O_NONBLOCK;
         if (fcntl(tmp_sock, F_SETFL, flags) == -1)
         {
             ::close(tmp_sock);
-            throw std::runtime_error{make_socket_error_string("failed to set socket flags")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to set socket flags")};
         }
 #else
         assert(false);
@@ -167,7 +157,7 @@ namespace jhoyt::asl
         }
     }
 
-    void socket::set_reuse_address_option(bool value)
+    void socket::set_reuse_address_option(const bool value)
     {
         if (sock_ == k_invalid_socket)
         {
@@ -177,7 +167,7 @@ namespace jhoyt::asl
         auto opt_value = value ? 1 : 0;
         if (setsockopt(sock_, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == k_socket_error)
         {
-            throw std::runtime_error{make_socket_error_string("failed to set socket option for address reuse")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to set socket option for address reuse")};
         }
     }
 
@@ -190,7 +180,7 @@ namespace jhoyt::asl
 
         if (::shutdown(sock_, map_shutdown_type(type)) == k_socket_error)
         {
-            throw std::runtime_error{make_socket_error_string("failed to shutdown socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to shutdown socket")};
         }
     }
 
@@ -204,7 +194,7 @@ namespace jhoyt::asl
         const auto& addr_data = addr.get_data();
         if (::bind(sock_, reinterpret_cast<const sockaddr*>(addr_data.data()), addr_data.size()) == k_socket_error)
         {
-            throw std::runtime_error{make_socket_error_string("failed to bind socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to bind socket")};
         }
     }
 
@@ -217,7 +207,7 @@ namespace jhoyt::asl
 
         if (::listen(sock_, backlog) == k_socket_error)
         {
-            throw std::runtime_error{make_socket_error_string("failed to listen on socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to listen on socket")};
         }
     }
 
@@ -236,7 +226,7 @@ namespace jhoyt::asl
                 return connect_status::pending;
             }
 
-            throw std::runtime_error{make_socket_error_string("failed to connect socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to connect socket")};
         }
 
         return connect_status::connected;
@@ -262,7 +252,7 @@ namespace jhoyt::asl
                 return {socket::transfer_status::blocked, 0};
             }
 
-            throw std::runtime_error{make_socket_error_string("failed to send on socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to send on socket")};
         }
         else if (count == 0)
         {
@@ -292,7 +282,7 @@ namespace jhoyt::asl
                 return {socket::transfer_status::blocked, 0};
             }
 
-            throw std::runtime_error{make_socket_error_string("failed to recv on socket")};
+            throw std::runtime_error{detail::make_socket_error_string("failed to recv on socket")};
         }
         else if (count == 0)
         {
