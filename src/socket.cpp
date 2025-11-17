@@ -159,10 +159,7 @@ namespace jhoyt::asl
 
     void socket::set_reuse_address_option(const bool value)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for reuse address call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         auto opt_value = value ? 1 : 0;
         if (setsockopt(sock_, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == k_socket_error)
@@ -173,10 +170,7 @@ namespace jhoyt::asl
 
     void socket::shutdown(const shutdown_type type)
     {
-        if (sock_ != k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for shutdown call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         if (::shutdown(sock_, map_shutdown_type(type)) == k_socket_error)
         {
@@ -186,10 +180,7 @@ namespace jhoyt::asl
 
     void socket::bind(const raw_address& addr)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for bind call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         const auto& addr_data = addr.get_data();
         if (::bind(sock_, reinterpret_cast<const sockaddr*>(addr_data.data()), addr_data.size()) == k_socket_error)
@@ -200,10 +191,7 @@ namespace jhoyt::asl
 
     void socket::listen(int backlog)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for listen call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         if (::listen(sock_, backlog) == k_socket_error)
         {
@@ -213,10 +201,7 @@ namespace jhoyt::asl
 
     socket::connect_status socket::connect(const raw_address& addr)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for connect call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         const auto& addr_data = addr.get_data();
         if (::connect(sock_, reinterpret_cast<const sockaddr*>(addr_data.data()), addr_data.size()) == k_socket_error)
@@ -232,12 +217,34 @@ namespace jhoyt::asl
         return connect_status::connected;
     }
 
+    bool socket::accept(socket& sock, raw_address& addr)
+    {
+        assert(sock_ != k_invalid_socket);
+
+        auto addr_storage = sockaddr_storage{0};
+        auto addr_len = static_cast<socklen_t>(sizeof(addr));
+        const auto new_sock = ::accept(sock_, reinterpret_cast<sockaddr*>(&addr_storage), &addr_len);
+        if (new_sock == k_invalid_socket)
+        {
+            if (would_block())
+            {
+                return false;
+            }
+
+            throw std::runtime_error{detail::make_socket_error_string("failed to accept socket")};
+        }
+
+        sock.close();
+        sock.sock_ = new_sock;
+
+        addr = raw_address{std::span{reinterpret_cast<const char*>(&addr_storage), static_cast<size_t>(addr_len)}};
+
+        return true;
+    }
+
     std::pair<socket::transfer_status, size_t> socket::send(const std::span<const char> data)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for send call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         if (data.empty())
         {
@@ -264,10 +271,7 @@ namespace jhoyt::asl
 
     std::pair<socket::transfer_status, size_t> socket::recv(std::span<char> data)
     {
-        if (sock_ == k_invalid_socket)
-        {
-            throw std::runtime_error{"invalid socket for recv call"};
-        }
+        assert(sock_ != k_invalid_socket);
 
         if (data.empty())
         {

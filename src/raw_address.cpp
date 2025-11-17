@@ -122,6 +122,11 @@ namespace
 namespace jhoyt::asl
 {
 
+    raw_address::raw_address()
+    {
+        memset(&data_, 0, sizeof(data_));
+    }
+
     raw_address::raw_address(const address& addr) : data_(storage_from_address(addr))
     {
     }

@@ -84,6 +84,8 @@ else ()
     add_library(asl STATIC ${ASL_SOURCES} ${ASL_ALL_HEADERS})
 endif ()
 
+add_library(jhoyt::asl ALIAS asl)
+
 target_include_directories(asl PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
 
 set_target_properties(asl PROPERTIES VERSION ${ASL_VERSION} SOVERSION ${ASL_VERSION_MAJOR}.${ASL_VERSION_MINOR})
@@ -91,12 +93,12 @@ set_target_properties(asl PROPERTIES VERSION ${ASL_VERSION} SOVERSION ${ASL_VERS
 set_target_properties(asl PROPERTIES DEBUG_POSTFIX ${ASL_DEBUG_POSTFIX})
 
 #
-# Unit tests
+# Tests
 #
 
 if (ASL_BUILD_TESTS OR ASL_BUILD_ALL)
     message(STATUS "Generating tests")
     enable_testing()
-    # TODO
+    add_subdirectory(tests)
 endif ()
 

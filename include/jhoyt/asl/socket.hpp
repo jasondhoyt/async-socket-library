@@ -24,6 +24,16 @@ namespace jhoyt::asl
         socket(socket& other) noexcept;
         socket& operator=(socket&& other) noexcept;
 
+        [[nodiscard]] auto get_id() const
+        {
+            return sock_;
+        }
+
+        explicit operator bool() const
+        {
+            return sock_ != k_invalid_socket;
+        }
+
         void open(socket_domain domain, socket_type type);
 
         void close();
@@ -51,6 +61,14 @@ namespace jhoyt::asl
 
         connect_status connect(const raw_address& addr);
 
+        enum class result
+        {
+            ok,
+            blocked
+        };
+
+        bool accept(socket& sock, raw_address& addr);
+
         enum class transfer_status
         {
             success,
@@ -64,6 +82,10 @@ namespace jhoyt::asl
 
     private:
         socket_id sock_ = k_invalid_socket;
+
+        explicit socket(const socket_id sock) : sock_(sock)
+        {
+        }
     };
 
 } // namespace jhoyt::asl

@@ -3,5 +3,7 @@
 
 #pragma once
 
+#include "context.hpp"
+#include "poller.hpp"
 #include "socket.hpp"
 #include "version.hpp"

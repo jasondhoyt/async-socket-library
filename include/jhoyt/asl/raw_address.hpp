@@ -22,6 +22,9 @@ namespace jhoyt::asl
     class ASL_API raw_address final
     {
     public:
+        /// @brief Construct an empty raw address.
+        raw_address();
+
         /// @brief Construct a new raw address from a provided generic address value.
         ///
         /// @param addr The generic address from which to construct the raw address.
@@ -46,7 +49,7 @@ namespace jhoyt::asl
         [[nodiscard]] address get_address() const;
 
     private:
-        sockaddr_storage data_;
+        sockaddr_storage data_{};
     };
 
 } // namespace jhoyt::asl

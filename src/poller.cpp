@@ -157,10 +157,13 @@ namespace jhoyt::asl
             switch (pimpl_->entry_types[ix])
             {
             case poll_type::connect:
-                // TODO : what about failed connection?
                 if ((entry.revents & POLLOUT) != 0)
                 {
                     pimpl_->results.emplace_back(entry.fd, poll_status::connection_succeeded);
+                }
+                else if ((entry.revents & POLLHUP) != 0)
+                {
+                    pimpl_->results.emplace_back(entry.fd, poll_status::connection_failed);
                 }
                 break;
 
