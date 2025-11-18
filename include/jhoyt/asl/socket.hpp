@@ -61,12 +61,6 @@ namespace jhoyt::asl
 
         connect_status connect(const raw_address& addr);
 
-        enum class result
-        {
-            ok,
-            blocked
-        };
-
         bool accept(socket& sock, raw_address& addr);
 
         enum class transfer_status
