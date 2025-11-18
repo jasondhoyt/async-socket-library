@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.11)
 
-project(asl_system_tests CXX)
+project(asl_tests CXX)
 
 include(../cmake/utils.cmake)
 
@@ -30,3 +30,5 @@ target_link_libraries(asl_system_tests PRIVATE
 )
 
 add_test(NAME asl_system_tests COMMAND asl_system_tests)
+
+add_subdirectory(unit)
