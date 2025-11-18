@@ -131,7 +131,7 @@ namespace jhoyt::asl
     {
     }
 
-    raw_address::raw_address(std::span<const char> data) : data_(storage_from_raw_data(data))
+    raw_address::raw_address(const std::span<const char> data) : data_(storage_from_raw_data(data))
     {
     }
 
@@ -178,6 +178,11 @@ namespace jhoyt::asl
         default:
             throw std::runtime_error{std::format("unsupported raw address type: {}", data_.ss_family)};
         }
+    }
+
+    std::string to_string(const raw_address& addr)
+    {
+        return to_string(addr.get_address());
     }
 
 } // namespace jhoyt::asl

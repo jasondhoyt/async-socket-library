@@ -40,4 +40,10 @@ namespace jhoyt::asl
         return static_cast<address_type>(addr.index());
     }
 
+    std::string to_string(const ipv4_address& addr);
+    std::string to_string(const ipv6_address& addr);
+    std::string to_string(const file_address& addr);
+
+    std::string to_string(const address& addr);
+
 } // namespace jhoyt::asl

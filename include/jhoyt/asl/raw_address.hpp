@@ -52,4 +52,6 @@ namespace jhoyt::asl
         sockaddr_storage data_{};
     };
 
+    std::string to_string(const raw_address& addr);
+
 } // namespace jhoyt::asl
