@@ -6,9 +6,10 @@
 namespace jhoyt::asl
 {
 
+    /// @brief Enumeration that represents the supported types of sockets.
     enum class socket_type
     {
         stream
     };
 
-}
+} // namespace jhoyt::asl

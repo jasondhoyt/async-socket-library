@@ -6,6 +6,7 @@
 namespace jhoyt::asl
 {
 
+    /// @brief Enumeration that represents the supported types of socket domains.
     enum class socket_domain
     {
         ipv4,
@@ -13,4 +14,4 @@ namespace jhoyt::asl
         file
     };
 
-}
+} // namespace jhoyt::asl
