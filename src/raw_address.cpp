@@ -58,6 +58,11 @@ namespace
         case address_type::file: {
             const auto& [path] = *std::get_if<file_address>(&addr);
             auto& file_out = *reinterpret_cast<sockaddr_un*>(&storage);
+            if (path.empty())
+            {
+                throw std::runtime_error{"file address path is empty"};
+            }
+
             if (path.length() > sizeof(file_out.sun_path) - 1)
             {
                 throw std::runtime_error{"file address path is too long"};
