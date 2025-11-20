@@ -52,6 +52,7 @@ option(ASL_BUILD_SHARED "Build shared library" OFF)
 option(ASL_BUILD_PIC "Build position independent code (-fPIC)" OFF)
 set(ASL_DEBUG_POSTFIX "d" CACHE STRING "Filename postfix for libraries in debug builds")
 option(ASL_BUILD_TESTS "Build tests" OFF)
+option(ASL_BUILD_MOCKS "Build mocks" OFF)
 option(ASL_BUILD_WARNINGS "Enable compiler warnings" OFF)
 
 # TODO : install options
@@ -103,3 +104,11 @@ if (ASL_BUILD_TESTS OR ASL_BUILD_ALL)
     add_subdirectory(tests)
 endif ()
 
+#
+# Mocks
+#
+
+if (ASL_BUILD_MOCKS OR ASL_BUILD_ALL)
+    message(STATUS "Building mocks")
+    add_subdirectory(mocks)
+endif ()
