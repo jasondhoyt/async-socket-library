@@ -10,6 +10,7 @@ target_include_directories(asl_mocks PRIVATE
 
 target_sources(asl_mocks PRIVATE
         src/mock_poller.cpp
+        src/mock_socket.cpp
         "${PROJECT_SOURCE_DIR}/src/address.cpp"
         "${PROJECT_SOURCE_DIR}/src/raw_address.cpp"
 )

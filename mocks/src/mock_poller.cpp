@@ -3,8 +3,6 @@
 
 #include "jhoyt/asl/mocks/poller_mock.hpp"
 
-#include "jhoyt/asl/poller.hpp"
-
 namespace
 {
     using namespace jhoyt::asl;
@@ -82,9 +80,9 @@ namespace jhoyt::asl
             return g_remove_socket_calls;
         }
 
-        void poller_enqueue_poll_result(poller::poll_result result)
+        void poller_enqueue_poll_result(const poller::poll_result result)
         {
-            g_poll_results.push_back(std::move(result));
+            g_poll_results.push_back(result);
         }
 
         void poller_set_poll_throws(const bool value)
